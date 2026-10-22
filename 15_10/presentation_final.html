@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Устройство для производства пюреобразных концентратов | ИТМО</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* ===== VIEWPORT STAGE (1920x1080, scales uniformly) ===== */
+        .viewport-stage {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stage-scaler {
+            width: 1920px;
+            height: 1080px;
+            position: absolute;
+            transform-origin: top left;
+            transform: scale(calc(min(100vw / 1920, 100vh / 1080)));
+        }
+        
+        /* ===== SLIDE STRUCTURE ===== */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1920px;
+            height: 1080px;
+            background: #000000;
+            display: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .slide.active {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            z-index: 10;
+        }
+        
+        /* ===== BACKGROUND ELEMENTS ===== */
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 80px 80px;
+            pointer-events: none;
+        }
+        
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            pointer-events: none;
+        }
+        
+        .gradient-orb.top-right {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 200, 150, 0.3) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+        }
+        
+        .gradient-orb.bottom-left {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 102, 204, 0.25) 0%, transparent 70%);
+            bottom: -100px;
+            left: -100px;
+        }
+        
+        /* ===== CONTENT LAYOUT ===== */
+        .content {
+            position: relative;
+            z-index: 10;
+            padding: 100px 120px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .content.centered {
+            justify-content: center;
+        }
+        
+        .content.spaced {
+            justify-content: space-between;
+        }
+        
+        /* ===== TYPOGRAPHY ===== */
+        .tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #00c896, #0066cc);
+            color: #000;
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            width: fit-content;
+        }
+        
+        h1 {
+            font-size: 72px;
+            line-height: 1.05;
+            font-weight: 800;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h2 {
+            font-size: 56px;
+            line-height: 1.1;
+            font-weight: 700;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h3 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #ffffff;
+        }
+        
+        .subtitle {
+            font-size: 32px;
+            color: #64748b;
+            font-weight: 400;
+            margin-bottom: 60px;
+        }
+        
+        p, li {
+            font-size: 20px;
+            line-height: 1.6;
+            color: #94a3b8;
+        }
+        
+        strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        /* ===== STATS CARDS ===== */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .stat {
+            padding: 35px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-value {
+            font-size: 52px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00c896, #0066cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 15px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        
+        /* ===== CARDS GRID ===== */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .card {
+            padding: 35px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 200, 150, 0.4);
+        }
+        
+        .card h4 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .card p, .card li {
+            font-size: 18px;
+            color: #94a3b8;
+        }
+        
+        .card-icon {
+            font-size: 28px;
+        }
+        
+        /* ===== TABLES ===== */
+        .table-container {
+            overflow-x: auto;
+            margin: 30px 0;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 17px;
+        }
+        
+        th {
+            background: linear-gradient(135deg, rgba(0, 200, 150, 0.2), rgba(0, 102, 204, 0.2));
+            color: #ffffff;
+            padding: 20px 25px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid rgba(0, 200, 150, 0.3);
+        }
+        
+        td {
+            padding: 18px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .highlight-cell {
+            color: #00c896;
+            font-weight: 600;
+        }
+        
+        /* ===== LISTS ===== */
+        ul, ol {
+            margin-left: 30px;
+            color: #94a3b8;
+        }
+        
+        li {
+            margin: 15px 0;
+        }
+        
+        /* ===== HIGHLIGHT BOX ===== */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 200, 150, 0.1), rgba(0, 102, 204, 0.1));
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            border-left: 4px solid #00c896;
+            border-radius: 16px;
+            padding: 35px;
+            margin: 40px 0;
+        }
+        
+        .highlight-box h3 {
+            color: #00c896;
+            margin-bottom: 20px;
+        }
+        
+        .highlight-box p {
+            font-size: 20px;
+            line-height: 1.7;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer-accent {
+            position: absolute;
+            bottom: 80px;
+            right: 120px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+        }
+        
+        .footer-line {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #00c896, transparent);
+        }
+        
+        .footer-text {
+            font-size: 14px;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .slide-number {
+            position: absolute;
+            bottom: 80px;
+            left: 120px;
+            font-size: 14px;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 10;
+        }
+        
+        /* ===== NAVIGATION ===== */
+        .nav {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-btn:hover {
+            background: #00c896;
+            border-color: #00c896;
+            color: #000;
+            transform: scale(1.1);
+        }
+        
+        /* ===== PROGRESS BAR ===== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00c896, #0066cc);
+            z-index: 1001;
+            transition: width 0.3s ease;
+        }
+        
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .slide.active .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        .slide.active .animate-in.delay-1 { animation-delay: 0.1s; }
+        .slide.active .animate-in.delay-2 { animation-delay: 0.2s; }
+        .slide.active .animate-in.delay-3 { animation-delay: 0.3s; }
+        .slide.active .animate-in.delay-4 { animation-delay: 0.4s; }
+        
+        /* ===== PRIORITY COLORS ===== */
+        .priority-high { color: #ef4444 !important; font-weight: 600; }
+        .priority-medium { color: #f59e0b !important; font-weight: 600; }
+        .priority-low { color: #10b981 !important; font-weight: 600; }
+        
+        /* ===== RESPONSIVE SCALING ===== */
+        @media (max-width: 768px) {
+            .nav {
+                right: 15px;
+            }
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="viewport-stage">
+        <div class="stage-scaler" id="stageScaler">
+            
+            <!-- ===== SLIDE 1: TITLE ===== -->
+            <div class="slide active" id="slide1">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb top-right"></div>
+                <div class="gradient-orb bottom-left"></div>
+                
+                <div class="content centered">
+                    <span class="tag animate-in">Патент RU 217381 U1</span>
+                    <h1 class="animate-in delay-1">Устройство для производства пюреобразных концентратов</h1>
+                    <p class="subtitle animate-in delay-2">Анализ рынка и целевой аудитории</p>
+                    
+                    <div class="stats animate-in delay-3">
+                        <div class="stat">
+                            <div class="stat-value">ИТМО</div>
+                            <div class="stat-label">Патентообладатель</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">29.03.2023</div>
+                            <div class="stat-label">Дата патента</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">ППМ-1</div>
+                            <div class="stat-label">Проект</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">ИТМО | ФТМИ | 2026</div>
+                </div>
+                <div class="slide-number">1 / 12</div>
+            </div>
+            
+            <!-- ===== SLIDE 2: TECHNICAL ESSENCE ===== -->
+            <div class="slide" id="slide2">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb top-right"></div>
+                
+                <div class="content spaced">
+                    <div>
+                        <span class="tag">Техническая сущность</span>
+                        <h2>Компоненты устройства</h2>
+                        
+                        <div class="cards">
+                            <div class="card animate-in">
+                                <h4><span class="card-icon">📥</span>Загрузочный бункер</h4>
+                                <p>Подача сырья с приводным измельчающим барабаном со съёмными ножами</p>
+                            </div>
+                            <div class="card animate-in delay-1">
+                                <h4><span class="card-icon">🔍</span>Ситовый барабан + вал</h4>
+                                <p>Сепарация мякоти от кожицы и косточек</p>
+                            </div>
+                            <div class="card animate-in delay-2">
+                                <h4><span class="card-icon">🔥</span>Термокамера</h4>
+                                <p>Нагрев массы паровой рубашкой</p>
+                            </div>
+                            <div class="card animate-in delay-3">
+                                <h4><span class="card-icon">⚡</span>Вакуум-камера</h4>
+                                <p>Финишная обработка при пониженном давлении</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box animate-in delay-4">
+                        <h3>🎯 Ключевые преимущества</h3>
+                        <ul>
+                            <li><strong>Производительность:</strong> ~1225 кг/ч готового продукта</li>
+                            <li><strong>Выход продукта:</strong> ~94% (выше отраслевого стандарта 80–85%)</li>
+                            <li><strong>Непрерывный режим работы</strong> вместо периодического</li>
+                            <li><strong>Регулируемая тонкость помола</strong> за счёт съёмных ножей</li>
+                            <li><strong>Щадящая обработка</strong> — вакуум снижает температуру, сохраняет витамины</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">ИТМО | ФТМИ</div>
+                </div>
+                <div class="slide-number">2 / 12</div>
+            </div>
+            
+            <!-- ===== SLIDE 3: TARGET AUDIENCE ===== -->
+            <div class="slide" id="slide3">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb bottom-left"></div>
+                
+                <div class="content">
+                    <div>
+                        <span class="tag">Целевая аудитория</span>
+                        <h2>Сегментация рынка</h2>
+                        
+                        <div class="table-container animate-in">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Сегмент</th>
+                                        <th>Потребности</th>
+                                        <th>Приоритет</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Производители детского питания</strong></td>
+                                        <td>Высокое качество, однородность, сохранение витаминов</td>
+                                        <td class="priority-high">🔴 Высокий</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Производители соков и нектаров</strong></td>
+                                        <td>Максимальный выход сока, минимизация отходов</td>
+                                        <td class="priority-high">🔴 Высокий</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Консервные заводы</strong></td>
+                                        <td>Производительность, универсальность</td>
+                                        <td class="priority-medium">🟡 Средний</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Производители снеков и начинок</strong></td>
+                                        <td>Пюреобразная консистенция, стабильность</td>
+                                        <td class="priority-medium">🟡 Средний</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Научно-исследовательские лаборатории</strong></td>
+                                        <td>Точность, воспроизводимость, масштабируемость</td>
+                                        <td class="priority-medium">🟡 Средний</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Фермерские хозяйства</strong></td>
+                                        <td>Компактность, доступная цена</td>
+                                        <td class="priority-low">🟢 Низкий</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">ИТМО | ФТМИ</div>
+                </div>
+                <div class="slide-number">3 / 12</div>
+            </div>
+            
+            <!-- ===== SLIDE 4: IDEAL CUSTOMER PROFILE ===== -->
+            <div class="slide" id="slide4">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb top-right"></div>
+                
+                <div class="content">
+                    <div>
+                        <span class="tag">Портрет клиента</span>
+                        <h2>Идеальный клиент (ICP)</h2>
+                        
+                        <div class="cards">
+                            <div class="card animate-in">
+                                <h4><span class="card-icon">🏭</span>Тип компании</h4>
+                                <p>Средний производитель детского питания или соковой продукции</p>
+                            </div>
+                            <div class="card animate-in delay-1">
+                                <h4><span class="card-icon">📊</span>Объём переработки</h4>
+                                <p>500–5000 кг сырья в смену</p>
+                            </div>
+                            <div class="card animate-in delay-2">
+                                <h4><span class="card-icon">🌍</span>География</h4>
+                                <p>Россия, СНГ</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box animate-in delay-3">
+                        <h3>❗ Ключевые боли</h3>
+                        <ul>
+                            <li>Потери сырья при протирке (до 15–20% в существующих машинах)</li>
+                            <li>Необходимость остановки линии для настройки под разные фрукты</li>
+                            <li>Высокое содержание мякоти в соке (требует дополнительной фильтрации)</li>
+                            <li>Сезонность производства — простой оборудования вне сезона</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="highlight-box animate-in delay-4">
+                        <h3>📋 Критерии выбора оборудования</h3>
+                        <ol>
+                            <li>Выход готового продукта (%)</li>
+                            <li>Производительность (кг/ч)</li>
+                            <li>Универсальность (фрукты/овощи)</li>
+                            <li>Надёжность и доступность запчастей</li>
+                            <li>Цена и срок окупаемости</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">ИТМО | ФТМИ</div>
+                </div>
+                <div class="slide-number">4 / 12</div>
+            </div>
+            
+            <!-- ===== SLIDE 5: COMPETITOR ANALYSIS ===== -->
+            <div class="slide" id="slide5">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb bottom-left"></div>
+                
+                <div class="content">
+                    <div>
+                        <span class="tag">Конкуренты</span>
+                        <h2>Анализ конкурентов</h2>
+                        
+                        <div class="table-container animate-in">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Критерий</th>
+                                        <th>ИТМО (RU 217381)</th>
+                                        <th>1П31 (СССР)</th>
+                                        <th>Bertuzzi (Италия)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Производительность</strong></td>
+                                        <td>~1225 кг/ч</td>
+                                        <td>~500–800 кг/ч</td>
+                                        <td>До 5000 кг/ч</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Выход продукта</strong></td>
+                                        <td class="highlight-cell">~94%</td>
+                                        <td>~80–85%</td>
+                                        <td>~92–95%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Режим работы</strong></td>
+                                        <td>Непрерывный</td>
+                                        <td>Периодический</td>
+                                        <td>Непрерывный</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Термообработка</strong></td>
+                                        <td class="highlight-cell">Пар + вакуум</td>
+                                        <td>Отсутствует</td>
+                                        <td>Опционально</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Цена</strong></td>
+                                        <td class="highlight-cell">Низкая (отечественное)</td>
+                                        <td>Низкая</td>
+                                        <td>Высокая (импорт)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Сервис</strong></td>
+                                        <td class="highlight-cell">Доступен в РФ</td>
+                                        <td>Доступен</td>
+                                        <td>Импорт, сроки</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box animate-in delay-1">
+                        <h3>🎯 Позиционирование</h3>
+                        <p><strong>Ниша:</strong> Между устаревшими советскими машинами и дорогим импортом</p>
+                        <p><strong>УТП:</strong> Непрерывный режим + вакуумная камера + регулируемый помол + выход 94%</p>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">ИТМО | ФТМИ</div>
+                </div>
+                <div class="slide-number">5 / 12</div>
+            </div>
+            
+            <!-- ===== SLIDE 6: MARKET CAPACITY ===== -->
+            <div class="slide" id="slide6">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb top-right"></div>
+                <div class="gradient-orb bottom-left"></div>
+                
+                <div class="content">
+                    <div>
+                        <span class="tag">Рынок</span>
+                        <h2>Ёмкость рынка</h2>
+                        
+                        <div class="stats animate-in">
+                            <div class="stat">
+                                <div class="stat-value">$3.5 млрд</div>
+                                <div class="stat-label">Глобальный рынок оборудования</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">$25 млрд</div>
+                                <div class="stat-label">Рынок фруктовых пюре</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">5.2%</div>
+                                <div class="stat-label">CAGR до 2030</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">1.2 млн т</div>
+                                <div class="stat-label">Производство в РФ (консервы/год)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cards">
+                        <div class="card animate-in delay-1">
+                            <h4><span class="card-icon">📈</span>Драйверы роста</h4>
+                            <ul>
+                                <li><strong>Импортозамещение</strong> — уход западных производителей</li>
+                                <li><strong>Тренд на ЗОЖ</strong> — рост спроса на натуральные пюре</li>
+                                <li><strong>Рост внутреннего производства</strong> — поддержка фермерства</li>
+                                <li><strong>Экспортный потенциал</strong> — рынки СНГ, Азии</li>
+                            </ul>
+                        </div>
+                        <div class="card animate-in delay-2">
+                            <h4><span class="card-icon">🚧</span>Барьеры входа</h4>
+                            <ul>
+                                <li><strong>Сертификация</strong> — ТР ТС 010/2011, ТР ТС 021/2011</li>
+                                <li><strong>Доверие к бренду</strong> — предпочтение импортным брендам</li>
+                                <li><strong>Дилерская сеть</strong> — необходимость сервиса в регионах</li>
+                                <li><strong>Демонстрационные площадки</strong> — тестовые запуски</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">ИТМО | ФТМИ</div>
+                </div>
+                <div class="slide-number">6 / 12</div>
+            </div>
+            
+            <!-- ===== SLIDE 7: INDUSTRY TRENDS ===== -->
+            <div class="slide" id="slide7">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb top-right"></div>
+                
+                <div class="content">
+                    <div>
+                        <span class="tag">Тренды</span>
+                        <h2>Тренды индустрии</h2>
+                        
+                        <div class="cards">
+                            <div class="card animate-in">
+                                <h4><span class="card-icon">🔬</span>Технологические тренды</h4>
+                                <ul>
+                                    <li>✅ <strong>Энергоэффективность</strong> — вакуум снижает температуру</li>
+                                    <li>⚠️ <strong>Автоматизация</strong> — потенциал для модернизации</li>
+                                    <li>✅ <strong>Гигиенический дизайн</strong> — съёмные ножи</li>
+                                    <li>⚠️ <strong>Модульность</strong> — потенциал для расширения</li>
+                                    <li>✅ <strong>Щадящая обработка</strong> — сохранение витаминов</li>
+                                </ul>
+                            </div>
+                            <div class="card animate-in delay-1">
+                                <h4><span class="card-icon">📊</span>Рыночные тренды</h4>
+                                <ul>
+                                    <li>📈 <strong>Рост детского питания</strong> — +7–9% в год</li>
+                                    <li>💎 <strong>Премиализация</strong> — спрос на органические продукты</li>
+                                    <li>📦 <strong>Асептическая упаковка</strong> — переход на дой-паки</li>
+                                    <li>🏭 <strong>Локализация</strong> — короткие цепочки поставок</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box animate-in delay-2">
+                        <p><strong>💡 Вывод:</strong> Разработка соответствует ключевым трендам, но требует доработки в части автоматизации и модульности</p>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">ИТМО | ФТМИ</div>
+                </div>
+                <div class="slide-number">7 / 12</div>
+            </div>
+            
+            <!-- ===== SLIDE 8: HYPOTHESIS VALIDATION ===== -->
+            <div class="slide" id="slide8">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb bottom-left"></div>
+                
+                <div class="content">
+                    <div>
+                        <span class="tag">Валидация</span>
+                        <h2>Гипотеза</h2>
+                        
+                        <div class="highlight-box animate-in">
+                            <p style="font-size: 22px; line-height: 1.8;"><em>«Производители фруктовых и овощных пюре готовы перейти на отечественное оборудование с выходом продукта 94% и непрерывным режимом работы, если цена будет на 30–40% ниже импортных аналогов при сопоставимом качестве»</em></p>
+                        </div>
+                    </div>
+                    
+                    <div class="cards">
+                        <div class="card animate-in delay-1">
+                            <h4><span class="card-icon">📋</span>Вопросы для опроса</h4>
+                            <ul>
+                                <li>Тип компании и объём переработки</li>
+                                <li>Какое оборудование используется сейчас?</li>
+                                <li>Какой текущий выход готового продукта (%)?</li>
+                                <li>Какие основные потери сырья?</li>
+                                <li>Насколько важен выход продукта (1–10)?</li>
+                                <li>Готовы рассмотреть отечественное оборудование?</li>
+                                <li>Планируется ли модернизация в ближайшие 12 мес.?</li>
+                            </ul>
+                        </div>
+                        <div class="card animate-in delay-2">
+                            <h4><span class="card-icon">📢</span>Каналы для опроса</h4>
+                            <ul>
+                                <li>Отраслевые выставки (Пищевка, Агропродмаш)</li>
+                                <li>Профильные ассоциации (Союзконсервпром)</li>
+                                <li>LinkedIn / TenChat — ЛПР заводов</li>
+                                <li>Отраслевые СМИ</li>
+                                <li>Партнёры-интеграторы</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">ИТМО | ФТМИ</div>
+                </div>
+                <div class="slide-number">8 / 12</div>
+            </div>
+            
+            <!-- ===== SLIDE 9: COMMERCIALIZATION ===== -->
+            <div class="slide" id="slide9">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb top-right"></div>
+                
+                <div class="content">
+                    <div>
+                        <span class="tag">Коммерциализация</span>
+                        <h2>План коммерциализации</h2>
+                        
+                        <div class="table-container animate-in">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Шаг</th>
+                                        <th>Описание</th>
+                                        <th>Срок</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>1. Прототип и испытания</strong></td>
+                                        <td>Построить рабочий прототип, тесты на 3–5 типах сырья</td>
+                                        <td>3–6 мес.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>2. Патентная стратегия</strong></td>
+                                        <td>Проверить свободу действия (FTO), рассмотреть PCT-заявку</td>
+                                        <td>1–2 мес.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>3. Поиск партнёров</strong></td>
+                                        <td>Производители оборудования, интеграторы, кооперативы</td>
+                                        <td>2–4 мес.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>4. Гранты и поддержка</strong></td>
+                                        <td>Фонд содействия инновациям, Минпромторг, Сколково</td>
+                                        <td>1–3 мес.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box animate-in delay-1">
+                        <p><strong>⚠️ Приоритет:</strong> Пилотные испытания. Без реальных данных коммерциализация невозможна.</p>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">ИТМО | ФТМИ</div>
+                </div>
+                <div class="slide-number">9 / 12</div>
+            </div>
+            
+            <!-- ===== SLIDE 10: ECONOMICS ===== -->
+            <div class="slide" id="slide10">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb top-right"></div>
+                <div class="gradient-orb bottom-left"></div>
+                
+                <div class="content">
+                    <div>
+                        <span class="tag">Экономика</span>
+                        <h2>Экономика производства</h2>
+                        
+                        <div class="stats animate-in">
+                            <div class="stat">
+                                <div class="stat-value">1 225</div>
+                                <div class="stat-label">кг/ч производительность</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">94%</div>
+                                <div class="stat-label">Выход продукта</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">5 млн ₽</div>
+                                <div class="stat-label">Цена оборудования</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">6–9 мес</div>
+                                <div class="stat-label">Срок окупаемости</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box animate-in delay-1">
+                        <h3>💰 Ключевые показатели</h3>
+                        <ul>
+                            <li><strong>Себестоимость 1 тонны:</strong> 47 000–77 500 ₽</li>
+                            <li><strong>Цена продажи (опт):</strong> 120 000–180 000 ₽</li>
+                            <li><strong>Маржа с тонны:</strong> 42 500–133 000 ₽</li>
+                            <li><strong>Маржинальность:</strong> 47–72%</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">ИТМО | ФТМИ</div>
+                </div>
+                <div class="slide-number">10 / 12</div>
+            </div>
+            
+            <!-- ===== SLIDE 11: RISKS ===== -->
+            <div class="slide" id="slide11">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb bottom-left"></div>
+                
+                <div class="content">
+                    <div>
+                        <span class="tag">Риски</span>
+                        <h2>Риски и митигация</h2>
+                        
+                        <div class="table-container animate-in">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Риск</th>
+                                        <th>Вероятность</th>
+                                        <th>Влияние</th>
+                                        <th>Митигация</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Недоверие к отечественному оборудованию</td>
+                                        <td class="priority-high">Высокая</td>
+                                        <td class="priority-high">Высокое</td>
+                                        <td>Пилотные испытания, гарантия возврата</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Сложность масштабирования</td>
+                                        <td class="priority-medium">Средняя</td>
+                                        <td class="priority-high">Высокое</td>
+                                        <td>Привлечение опытного КБ</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Конкуренция с б/у импортом</td>
+                                        <td class="priority-medium">Средняя</td>
+                                        <td class="priority-medium">Среднее</td>
+                                        <td>Акцент на сервис, гарантию, запчасти</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Длительный цикл продаж</td>
+                                        <td class="priority-high">Высокая</td>
+                                        <td class="priority-medium">Среднее</td>
+                                        <td>Работа через интеграторов, лизинг</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box animate-in delay-1">
+                        <p><strong>⚠️ Ключевой риск:</strong> Длительный цикл продаж (6–18 мес. для промышленного оборудования)</p>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">ИТМО | ФТМИ</div>
+                </div>
+                <div class="slide-number">11 / 12</div>
+            </div>
+            
+            <!-- ===== SLIDE 12: CONCLUSIONS ===== -->
+            <div class="slide" id="slide12">
+                <div class="grid-bg"></div>
+                <div class="gradient-orb top-right"></div>
+                <div class="gradient-orb bottom-left"></div>
+                
+                <div class="content centered">
+                    <div>
+                        <span class="tag animate-in">Выводы</span>
+                        <h2 class="animate-in delay-1">Итоговые выводы</h2>
+                        
+                        <div class="cards">
+                            <div class="card animate-in delay-2">
+                                <h4><span class="card-icon">📊</span>Рынок</h4>
+                                <p>Российский рынок оборудования растёт на фоне импортозамещения. Ёмкость — сотни млн долларов, CAGR ~5–7%</p>
+                            </div>
+                            <div class="card animate-in delay-3">
+                                <h4><span class="card-icon">🎯</span>ЦА</h4>
+                                <p>Основные сегменты — производители детского питания, соков, консервов. Ключевые боли: низкий выход, простои, неоднородность</p>
+                            </div>
+                            <div class="card animate-in delay-4">
+                                <h4><span class="card-icon">🏆</span>Конкуренты</h4>
+                                <p>Отечественные аналоги уступают по производительности. Импортные аналоги дороже и сложнее в сервисе</p>
+                            </div>
+                            <div class="card animate-in delay-5">
+                                <h4><span class="card-icon">💎</span>УТП</h4>
+                                <p>Непрерывный режим + вакуумная обработка + выход 94% + регулируемый помол + отечественное производство</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box animate-in delay-6">
+                        <h3>📋 Следующий шаг</h3>
+                        <p>Провести 10–15 глубинных интервью с технологами и главными инженерами заводов для валидации гипотезы.</p>
+                    </div>
+                </div>
+                
+                <div class="footer-accent">
+                    <div class="footer-line"></div>
+                    <div class="footer-text">Спасибо за внимание!</div>
+                </div>
+                <div class="slide-number">12 / 12</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <!-- ===== NAVIGATION ===== -->
+    <div class="nav">
+        <button class="nav-btn" onclick="goToSlide(0)" title="First slide">⏮</button>
+        <button class="nav-btn" onclick="prevSlide()" title="Previous">▲</button>
+        <button class="nav-btn" onclick="nextSlide()" title="Next">▼</button>
+        <button class="nav-btn" onclick="goToSlide(11)" title="Last slide">⏭</button>
+    </div>
+    
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        // ===== SLIDE NAVIGATION =====
+        let currentSlide = 0;
+        const totalSlides = 12;
+        
+        function updateSlide() {
+            // Hide all slides
+            document.querySelectorAll('.slide').forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+            
+            // Update progress bar
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Update scaler for responsive sizing
+            updateScaler();
+        }
+        
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+        
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+        
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlide();
+        }
+        
+        // ===== KEYBOARD NAVIGATION =====
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowDown':
+                case 'ArrowRight':
+                case 'PageDown':
+                case ' ':
+                    nextSlide();
+                    e.preventDefault();
+                    break;
+                case 'ArrowUp':
+                case 'ArrowLeft':
+                case 'PageUp':
+                    prevSlide();
+                    e.preventDefault();
+                    break;
+                case 'Home':
+                    goToSlide(0);
+                    e.preventDefault();
+                    break;
+                case 'End':
+                    goToSlide(totalSlides - 1);
+                    e.preventDefault();
+                    break;
+            }
+        });
+        
+        // ===== RESPONSIVE SCALING =====
+        function updateScaler() {
+            const stage = document.getElementById('stageScaler');
+            const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            stage.style.transform = `scale(${scale})`;
+        }
+        
+        window.addEventListener('resize', updateScaler);
+        window.addEventListener('load', () => {
+            updateScaler();
+            updateSlide();
+        });
+        
+        // ===== TOUCH NAVIGATION (for mobile) =====
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+        
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+            
+            // Horizontal swipe
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+        }, { passive: true });
+    </script>
+</body>
+</html>
