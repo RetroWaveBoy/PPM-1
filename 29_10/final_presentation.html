@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>РИД RU 217381 U1 — Финальная презентация</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* === RESET & BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2332;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-cyan: #06b6d4;
+            --accent-teal: #14b8a6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --border-color: #334155;
+            --gradient-1: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
+            --gradient-2: linear-gradient(135deg, #1a2332 0%, #0f172a 100%);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 40px rgba(6, 182, 212, 0.3);
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* === VIEWPORT STAGE (16:9 fixed) === */
+        .viewport-wrapper {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-primary);
+        }
+
+        .slide-stage {
+            width: 100%;
+            height: 100%;
+            max-width: calc(100vh * 16 / 9);
+            max-height: calc(100vw * 9 / 16);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* === SLIDE SYSTEM === */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 4rem 5rem;
+            background: var(--gradient-2);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 10;
+        }
+
+        /* === SLIDE CONTENT LAYOUT === */
+        .slide-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .slide-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .slide-title {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide-subtitle {
+            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            max-width: 70%;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        /* === CARDS & GRIDS === */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.75rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-cyan);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .card-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .card-metric {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-top: 1rem;
+        }
+
+        /* === LISTS === */
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .feature-list li::before {
+            content: '▸';
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            margin-top: 0.1em;
+        }
+
+        .feature-list li strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* === METRICS ROW === */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .metric-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* === COMPARISON TABLE === */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-table th {
+            background: rgba(6, 182, 212, 0.1);
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+        }
+
+        .comparison-table td:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(6, 182, 212, 0.05);
+        }
+
+        /* === BADGES === */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-green {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .badge-orange {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-orange);
+            border: 1px solid var(--accent-orange);
+        }
+
+        .badge-red {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        .badge-cyan {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+        }
+
+        /* === TIMELINE === */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 12px var(--accent-cyan);
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* === NAVIGATION === */
+        .nav-dots {
+            position: absolute;
+            bottom: 2rem;
+            right: 3rem;
+            display: flex;
+            gap: 0.75rem;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-cyan);
+        }
+
+        .nav-dot:hover {
+            background: var(--accent-teal);
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .slide.active .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .slide.active .animate-in-delay-1 {
+            animation: fadeInUp 0.6s ease 0.15s forwards;
+            opacity: 0;
+        }
+
+        .slide.active .animate-in-delay-2 {
+            animation: fadeInUp 0.6s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        .slide.active .animate-in-delay-3 {
+            animation: fadeInUp 0.6s ease 0.45s forwards;
+            opacity: 0;
+        }
+
+        .slide.active .animate-scale {
+            animation: scaleIn 0.8s ease forwards;
+        }
+
+        /* === TITLE SLIDE SPECIAL === */
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: 
+                radial-gradient(ellipse at 30% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(20, 184, 166, 0.1) 0%, transparent 50%),
+                var(--gradient-2);
+        }
+
+        .title-slide .slide-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .title-slide .slide-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            max-width: 100%;
+            color: var(--text-secondary);
+        }
+
+        .title-meta {
+            display: flex;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .title-meta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title-meta-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .title-meta-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.25rem;
+        }
+
+        /* === FOOTER === */
+        .slide-footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 3rem;
+            right: 8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* === HIGHLIGHT TEXT === */
+        .highlight {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .highlight-green {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .highlight-red {
+            color: var(--accent-red);
+            font-weight: 600;
+        }
+
+        .highlight-orange {
+            color: var(--accent-orange);
+            font-weight: 600;
+        }
+
+        /* === WARNING BOX === */
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--accent-orange);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .warning-box-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+            margin-bottom: 0.75rem;
+        }
+
+        .warning-box-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* === RESPONSIVE ADJUSTMENTS === */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 2rem;
+            }
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            .metrics-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .nav-dots {
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .slide,
+            .card,
+            .nav-dot {
+                transition: none;
+            }
+            .slide.active .animate-in,
+            .slide.active .animate-in-delay-1,
+            .slide.active .animate-in-delay-2,
+            .slide.active .animate-in-delay-3,
+            .slide.active .animate-scale {
+                animation: none;
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="viewport-wrapper">
+        <div class="slide-stage">
+            
+            <!-- === SLIDE 1: TITLE === -->
+            <div class="slide active title-slide" data-slide="0">
+                <div class="animate-scale">
+                    <div class="slide-number">Слайд 1 из 7</div>
+                    <h1 class="slide-title">РИД RU 217381 U1</h1>
+                    <p class="slide-subtitle">Устройство для производства пюреобразных концентратов из фруктов и овощей</p>
+                    
+                    <div class="title-meta">
+                        <div class="title-meta-item">
+                            <span class="title-meta-value">ITMO University</span>
+                            <span class="title-meta-label">ФТМИ</span>
+                        </div>
+                        <div class="title-meta-item">
+                            <span class="title-meta-value">Романенко Г.</span>
+                            <span class="title-meta-label">Докладчик</span>
+                        </div>
+                        <div class="title-meta-item">
+                            <span class="title-meta-value">TRL 3</span>
+                            <span class="title-meta-label">Готовность</span>
+                        </div>
+                        <div class="title-meta-item">
+                            <span class="title-meta-value">29.10.2026</span>
+                            <span class="title-meta-label">Дата защиты</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <span>Спринт 1 • Финальная презентация</span>
+                    <span>5 минут</span>
+                </div>
+            </div>
+
+            <!-- === SLIDE 2: PROBLEM === -->
+            <div class="slide" data-slide="1">
+                <div class="slide-header">
+                    <div class="slide-number">Слайд 2 из 7</div>
+                    <h2 class="slide-title">Проблема и её цена</h2>
+                </div>
+                <div class="slide-content">
+                    <ul class="feature-list animate-in">
+                        <li>
+                            <div>
+                                <strong>Потери сырья при протирке</strong><br>
+                                <span style="color: var(--text-secondary);">
+                                    Выход <span class="highlight-red">80–85%</span> у существующих машин vs <span class="highlight-green">94%</span> у нашего устройства.
+                                    При переработке 2000 тонн/год и цене сырья 60 тыс. ₽/тонну — это 
+                                    <span class="highlight">18–24 млн ₽ потерь ежегодно</span>.
+                                    Возврат 9–11 п.п. выхода = <span class="highlight-green">11–13 млн ₽ экономии</span> у клиента.
+                                </span>
+                            </div>
+                        </li>
+                        <li class="animate-in-delay-1">
+                            <div>
+                                <strong>Периодический режим и ручная переналадка</strong><br>
+                                <span style="color: var(--text-secondary);">
+                                    1–2 смены простоя при смене сырья. Непрерывный режим устраняет простои.
+                                </span>
+                            </div>
+                        </li>
+                        <li class="animate-in-delay-2">
+                            <div>
+                                <strong>Жёсткая термообработка убивает витамины</strong><br>
+                                <span style="color: var(--text-secondary);">
+                                    Вакуумная обработка сохраняет витамины, цвет, аромат. 
+                                    Это открывает вход в сегменты с маржой <span class="highlight">42–70%</span>: детское питание, БАД.
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="warning-box animate-in-delay-3">
+                        <div class="warning-box-title">
+                            <span>⚠️</span>
+                            <span>Ключевая мысль</span>
+                        </div>
+                        <p class="warning-box-text">
+                            Мы продаём не «машину лучше конкурента», а <span class="highlight">возврат денег, которые клиент уже теряет</span>.
+                        </p>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <span>Спринт 1 • Финальная презентация</span>
+                    <span>5 минут</span>
+                </div>
+            </div>
+
+            <!-- === SLIDE 3: SOLUTION === -->
+            <div class="slide" data-slide="2">
+                <div class="slide-header">
+                    <div class="slide-number">Слайд 3 из 7</div>
+                    <h2 class="slide-title">Решение, УТП и TRL</h2>
+                </div>
+                <div class="slide-content">
+                    <div class="cards-grid animate-in">
+                        <div class="card">
+                            <div class="card-icon">⚙️</div>
+                            <h3 class="card-title">4 узла</h3>
+                            <p class="card-text">
+                                Загрузочный бункер с регулируемыми ножами, ситовый барабан с бичами, 
+                                термокамера с паровой рубашкой, вакуум-камера.
+                            </p>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon">🎯</div>
+                            <h3 class="card-title">УТП</h3>
+                            <p class="card-text">
+                                <span class="highlight">«Bertuzzi по функционалу — 1П31 по цене — сервис в РФ за 2–4 недели»</span>
+                            </p>
+                            <div class="card-metric">4–7 млн ₽</div>
+                            <p class="card-text" style="margin-top: 0.5rem; font-size: 0.85rem;">
+                                против 20–50 млн ₽ у импорта
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="warning-box animate-in-delay-1">
+                        <div class="warning-box-title">
+                            <span>⚠️</span>
+                            <span>Честно о готовности</span>
+                        </div>
+                        <p class="warning-box-text">
+                            Наша оценка — <span class="badge badge-orange">TRL 3</span>, не 4. 
+                            Заявленные 94% выхода и 1225 кг/ч — <span class="highlight-red">расчётные величины из патента, а не результаты испытаний</span>. 
+                            Интегрального образца, работающего на реальном сырье, не существует.
+                        </p>
+                        <p class="warning-box-text" style="margin-top: 0.75rem;">
+                            Заявка в ФСИ «Старт-1» до 4 млн ₽ — правомерна. 
+                            Заявка в «Старт-2» или к инвестору — преждевременна (там ждут TRL 5).
+                        </p>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <span>Спринт 1 • Финальная презентация</span>
+                    <span>5 минут</span>
+                </div>
+            </div>
+
+            <!-- === SLIDE 4: BUSINESS MODEL === -->
+            <div class="slide" data-slide="3">
+                <div class="slide-header">
+                    <div class="slide-number">Слайд 4 из 7</div>
+                    <h2 class="slide-title">Бизнес-модель и экономика</h2>
+                </div>
+                <div class="slide-content">
+                    <div class="warning-box animate-in" style="border-color: var(--accent-red); background: rgba(239, 68, 68, 0.1);">
+                        <div class="warning-box-title" style="color: var(--accent-red);">
+                            <span>🔴</span>
+                            <span>Главный вывод спринта (неудобный)</span>
+                        </div>
+                        <p class="warning-box-text">
+                            Себестоимость серийной установки: <span class="highlight-red">4,0–7,2 млн ₽</span>. 
+                            При цене 4–7 млн ₽ валовая маржа: <span class="highlight-red">от −3% до +14%</span>.
+                            <br><br>
+                            <strong>Собственное производство не окупается.</strong> 
+                            В пессимистичном сценарии маржа отрицательна, в базовом — 14% не покрывают НИОКР, гарантию, развитие.
+                        </p>
+                    </div>
+
+                    <div class="cards-grid animate-in-delay-1">
+                        <div class="card">
+                            <h3 class="card-title">✅ Экономика для клиента работает</h3>
+                            <div class="card-metric">5–14 мес.</div>
+                            <p class="card-text" style="margin-top: 0.5rem;">
+                                Окупаемость даже в консервативном сценарии
+                            </p>
+                        </div>
+                        <div class="card">
+                            <h3 class="card-title">💡 Доступнее, а не дешевле</h3>
+                            <div class="card-metric" style="font-size: 1.25rem;">195 тыс. ₽/мес</div>
+                            <p class="card-text" style="margin-top: 0.5rem; font-size: 0.85rem;">
+                                против 382 тыс. ₽ у б/у импорта (льготный лизинг 5%)
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="cards-grid animate-in-delay-2" style="margin-top: 0;">
+                        <div class="card" style="border-color: var(--accent-green);">
+                            <h3 class="card-title" style="color: var(--accent-green);">Решение: лицензия</h3>
+                            <p class="card-text">
+                                Лицензия действующему производителю, роялти 3–5%, 
+                                <span class="highlight-green">маржа ~100%</span>
+                            </p>
+                        </div>
+                        <div class="card" style="border-color: var(--accent-cyan);">
+                            <h3 class="card-title" style="color: var(--accent-cyan);">Потребность</h3>
+                            <div class="card-metric">3 млн ₽</div>
+                            <p class="card-text" style="margin-top: 0.5rem;">
+                                Закрывается грантом ФСИ «Старт-1»
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <span>Спринт 1 • Финальная презентация</span>
+                    <span>5 минут</span>
+                </div>
+            </div>
+
+            <!-- === SLIDE 5: RISKS === -->
+            <div class="slide" data-slide="4">
+                <div class="slide-header">
+                    <div class="slide-number">Слайд 5 из 7</div>
+                    <h2 class="slide-title">Риски: SWOT + PESTEL</h2>
+                </div>
+                <div class="slide-content">
+                    <div class="cards-grid animate-in">
+                        <div class="card">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">📈</div>
+                            <h3 class="card-title">PESTEL: внешняя среда</h3>
+                            <ul class="feature-list" style="margin-top: 1rem; gap: 0.75rem;">
+                                <li style="font-size: 0.95rem;">
+                                    <span class="highlight-green">+</span> Политика и экономика за нас: импортозамещение, льготы
+                                </li>
+                                <li style="font-size: 0.95rem;">
+                                    <span class="highlight-green">+</span> Тренды спроса: ЗОЖ, pet food, детское питание
+                                </li>
+                                <li style="font-size: 0.95rem;">
+                                    <span class="highlight-red">−</span> Технологии: отрасль уходит в автоматизацию быстрее, чем мы поднимаем TRL
+                                </li>
+                                <li style="font-size: 0.95rem;">
+                                    <span class="highlight-red">−</span> Право: слабая защита, FTO не проверена
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">⚖️</div>
+                            <h3 class="card-title">Два блокера</h3>
+                            <ul class="feature-list" style="margin-top: 1rem; gap: 1rem;">
+                                <li style="font-size: 0.95rem;">
+                                    <strong>Полезная модель</strong><br>
+                                    <span style="color: var(--text-secondary);">
+                                        Экспертиза формальная, новизна не проверена, обходится изменением компоновки. 
+                                        FTO не проверена по РФ и экспорту.
+                                    </span>
+                                </li>
+                                <li style="font-size: 0.95rem;">
+                                    <strong>Права принадлежат ИТМО</strong><br>
+                                    <span style="color: var(--text-secondary);">
+                                        Любой грант, лицензия или инвестиция упирается в вопрос «кто получает доход». 
+                                        Стоит 0 ₽ и решается за месяц — но без этого всё неконвертируемо.
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="warning-box animate-in-delay-1">
+                        <div class="warning-box-title">
+                            <span>📊</span>
+                            <span>SWOT: вывод</span>
+                        </div>
+                        <p class="warning-box-text">
+                            Сильные стороны — <span class="highlight">экономические</span> (цена, сервис, OPEX). 
+                            Слабые — <span class="highlight-red">технологические и правовые</span> (нет образца, слабая ИС, чужие права). 
+                            Стратегия: не наращивать функциональность, а сокращать время до первого подтверждённого результата.
+                        </p>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <span>Спринт 1 • Финальная презентация</span>
+                    <span>5 минут</span>
+                </div>
+            </div>
+
+            <!-- === SLIDE 6: VALIDATION === -->
+            <div class="slide" data-slide="5">
+                <div class="slide-header">
+                    <div class="slide-number">Слайд 6 из 7</div>
+                    <h2 class="slide-title">Валидация: как проверяем</h2>
+                </div>
+                <div class="slide-content">
+                    <div class="cards-grid animate-in">
+                        <div class="card">
+                            <h3 class="card-title">📋 Дизайн исследования</h3>
+                            <ul class="feature-list" style="margin-top: 1rem; gap: 0.75rem;">
+                                <li style="font-size: 0.95rem;"><strong>18</strong> глубинных интервью</li>
+                                <li style="font-size: 0.95rem;"><strong>5</strong> сегментов (включая pet food, БАД)</li>
+                                <li style="font-size: 0.95rem;"><strong>4</strong> недели</li>
+                                <li style="font-size: 0.95rem;">Роли: технолог, главный инженер, директор</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-color: var(--accent-orange);">
+                            <h3 class="card-title" style="color: var(--accent-orange);">🛑 Что нас остановит</h3>
+                            <ul class="feature-list" style="margin-top: 1rem; gap: 0.75rem;">
+                                <li style="font-size: 0.9rem;">
+                                    Выход <span class="highlight-red">&lt;90%</span> → уходим в лицензирование «как есть»
+                                </li>
+                                <li style="font-size: 0.9rem;">
+                                    Вакуум без прироста витаминов <span class="highlight-red">&lt;5%</span> → опция, не преимущество
+                                </li>
+                                <li style="font-size: 0.9rem;">
+                                    Нет бюджета ни у кого → pivot в <span class="highlight">pet food</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="warning-box animate-in-delay-1" style="border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.1);">
+                        <div class="warning-box-title" style="color: var(--accent-cyan);">
+                            <span>🎯</span>
+                            <span>Первая площадка: pet food</span>
+                        </div>
+                        <p class="warning-box-text">
+                            Техпроцесс совпадает <span class="highlight">~85%</span>, барьер доверия и сертификация ниже. 
+                            Референс за <span class="highlight">3–4 мес.</span> вместо 12. 
+                            Детское питание — цель №2, после пилота.
+                        </p>
+                    </div>
+
+                    <p class="animate-in-delay-2" style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 1rem;">
+                        <strong>Важно:</strong> данные пока не собраны. Валидация — работа следующей недели, а не результат этой. 
+                        Мы не выдаём ожидания за факты.
+                    </p>
+                </div>
+                <div class="slide-footer">
+                    <span>Спринт 1 • Финальная презентация</span>
+                    <span>5 минут</span>
+                </div>
+            </div>
+
+            <!-- === SLIDE 7: DECISION === -->
+            <div class="slide" data-slide="6">
+                <div class="slide-header">
+                    <div class="slide-number">Слайд 7 из 7</div>
+                    <h2 class="slide-title">Решение и план</h2>
+                </div>
+                <div class="slide-content">
+                    <div class="cards-grid animate-in">
+                        <div class="card" style="border-color: var(--accent-green); grid-column: span 2;">
+                            <h3 class="card-title" style="color: var(--accent-green);">✅ Решение: GO с двумя условиями</h3>
+                            <ul class="feature-list" style="margin-top: 1rem;">
+                                <li style="font-size: 0.95rem;">
+                                    <strong>Последовательность сегментов:</strong> первая референс-площадка — <span class="highlight">pet food</span>, не детское питание
+                                </li>
+                                <li style="font-size: 0.95rem;">
+                                    <strong>Форма выхода:</strong> модуль в линии через интегратора или лицензия, не отдельная машина заводу
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <h3 class="card-title" style="margin-bottom: 1.5rem;">📍 3 гейта</h3>
+                        <div class="timeline animate-in-delay-1">
+                            <div class="timeline-item">
+                                <div class="timeline-date">Декабрь 2026</div>
+                                <div class="timeline-title"><span class="badge badge-cyan">Гейт 0</span> Права и FTO</div>
+                                <div class="timeline-desc">Запрос в патентный отдел ИТМО, FTO-поиск по РФ и СНГ</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Май 2027</div>
+                                <div class="timeline-title"><span class="badge badge-orange">Гейт 1</span> Стенд, подтверждение выхода ≥90%</div>
+                                <div class="timeline-desc">0,6–1,2 млн ₽, лабораторный стенд, испытания на 3 культурах</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Апрель 2028</div>
+                                <div class="timeline-title"><span class="badge badge-green">Гейт 2</span> Пилот и референс</div>
+                                <div class="timeline-desc">TRL 6, пилотная площадка, LOI от производителя</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box animate-in-delay-2">
+                        <div class="warning-box-title">
+                            <span>🚪</span>
+                            <span>Управляемый выход</span>
+                        </div>
+                        <p class="warning-box-text">
+                            Если Гейт 1 не пройден — проект закрывается или переходит в лицензирование «как есть». 
+                            Это не провал, это управляемый выход.
+                        </p>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <span>Спринт 1 • Финальная презентация</span>
+                    <span>5 минут</span>
+                </div>
+            </div>
+
+            <!-- === NAVIGATION DOTS === -->
+            <div class="nav-dots">
+                <div class="nav-dot active" data-target="0"></div>
+                <div class="nav-dot" data-target="1"></div>
+                <div class="nav-dot" data-target="2"></div>
+                <div class="nav-dot" data-target="3"></div>
+                <div class="nav-dot" data-target="4"></div>
+                <div class="nav-dot" data-target="5"></div>
+                <div class="nav-dot" data-target="6"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // === SLIDE NAVIGATION ===
+        const slides = document.querySelectorAll('.slide');
+        const navDots = document.querySelectorAll('.nav-dot');
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+
+        function goToSlide(index) {
+            if (index < 0 || index >= totalSlides) return;
+            
+            slides[currentSlide].classList.remove('active');
+            navDots[currentSlide].classList.remove('active');
+            
+            currentSlide = index;
+            
+            slides[currentSlide].classList.add('active');
+            navDots[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                case ' ':
+                case 'PageDown':
+                    nextSlide();
+                    e.preventDefault();
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                case 'PageUp':
+                    prevSlide();
+                    e.preventDefault();
+                    break;
+                case 'Home':
+                    goToSlide(0);
+                    e.preventDefault();
+                    break;
+                case 'End':
+                    goToSlide(totalSlides - 1);
+                    e.preventDefault();
+                    break;
+            }
+        });
+
+        // Navigation dots
+        navDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                goToSlide(parseInt(dot.dataset.target));
+            });
+        });
+
+        // Touch navigation
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+        }
+
+        // Click on slide edges
+        document.querySelector('.slide-stage').addEventListener('click', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const width = rect.width;
+            
+            if (x < width * 0.3) {
+                prevSlide();
+            } else if (x > width * 0.7) {
+                nextSlide();
+            }
+        });
+
+        console.log('🎯 Презентация готова! Навигация: стрелки, пробел, клик по краям, свайп.');
+    </script>
+</body>
+</html>
